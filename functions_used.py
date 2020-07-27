@@ -113,8 +113,8 @@ def define_model_cifar10(learning_rate):
     model.summary()
     return model
 
-
-def define_alexnet(learning_rate):
+# with Keras
+def define_alexnet_keras(learning_rate):
 
     model = tf.keras.Sequential()
     #L1
@@ -149,13 +149,82 @@ def define_alexnet(learning_rate):
     model.add(tf.keras.layers.Dropout(0.5))
 
     #L8 Fully Connected
-    model.add(tf.keras.layers.Dense(1000, kernel_initializer='glorot_normal', activation='softmax'))
+    model.add(tf.keras.layers.Dense(2, kernel_initializer='glorot_normal', activation='softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer=tf.keras.optimizers.Adam(lr=learning_rate), metrics=['accuracy'])
     model.summary()
 
     return model
 
+# Data Augmentation
+
+def corner_center_crop_reflect(images, crop_l):
+    """
+    Perform 4 corners and center cropping and reflection from images,
+    resulting in 10x augmented patches.
+    :param images: np.ndarray, shape: (N, H, W, C).
+    :param crop_l: int, a side length of crop region.
+    :return: np.ndarray, shape: (N, 10, h, w, C).
+    """
+    H, W = images.shape[1:3]
+    augmented_images = []
+    for image in images:    # image.shape: (H, W, C)
+        aug_image_orig = []
+        # Crop image in 4 corners
+        aug_image_orig.append(image[:crop_l, :crop_l])
+        aug_image_orig.append(image[:crop_l, -crop_l:])
+        aug_image_orig.append(image[-crop_l:, :crop_l])
+        aug_image_orig.append(image[-crop_l:, -crop_l:])
+        # Crop image in the center
+        aug_image_orig.append(image[H//2-(crop_l//2):H//2+(crop_l-crop_l//2),
+                                    W//2-(crop_l//2):W//2+(crop_l-crop_l//2)])
+        aug_image_orig = np.stack(aug_image_orig)    # (5, h, w, C)
+
+        # Flip augmented images and add it
+        aug_image_flipped = aug_image_orig[:, :, ::-1]    # (5, h, w, C)
+        aug_image = np.concatenate((aug_image_orig, aug_image_flipped), axis=0)    # (10, h, w, C)
+        augmented_images.append(aug_image)
+    return np.stack(augmented_images)    # shape: (N, 10, h, w, C)
+
+def center_crop(images, crop_l):
+    """
+    Perform center cropping of images.
+    :param images: np.ndarray, shape: (N, H, W, C).
+    :param crop_l: int, a side length of crop region.
+    :return: np.ndarray, shape: (N, h, w, C).
+    """
+    H, W = images.shape[1:3]
+    cropped_images = []
+    for image in images:    # image.shape: (H, W, C)
+        # Crop image in the center
+        cropped_images.append(image[H//2-(crop_l//2):H//2+(crop_l-crop_l//2),
+                              W//2-(crop_l//2):W//2+(crop_l-crop_l//2)])
+    return np.stack(cropped_images)
+
+def random_crop_reflect(images, crop_l):
+    """
+    Perform random cropping and reflection from images.
+    :param images: np.ndarray, shape: (N, H, W, C).
+    :param crop_l: int, a side length of crop region.
+    :return: np.ndarray, shape: (N, h, w, C).
+    """
+    H, W = images.shape[1:3]
+    augmented_images = []
+    for image in images:    # image.shape: (H, W, C)
+        # Randomly crop patch
+        y = np.random.randint(H-crop_l)
+        x = np.random.randint(W-crop_l)
+        image = image[y:y+crop_l, x:x+crop_l]    # (h, w, C)
+
+        # Randomly reflect patch horizontally
+        reflect = bool(np.random.randint(2))
+        if reflect:
+            image = image[:, ::-1]
+
+        augmented_images.append(image)
+    return np.stack(augmented_images)    # shape: (N, h, w, C)
+
+# without Keras
 
 def train_and_evaluate_model(model, train_images, train_labels,
                              test_images, test_labels, batch_size, training_epoch):
