@@ -1,4 +1,4 @@
-from functions_used import load_mnist, define_model_mnist, train_and_evaluate_model, summarize_diagnostics
+from functions_used import load_mnist, define_alexnet, define_model_mnist, train_and_evaluate_model, summarize_diagnostics
 
 
 if __name__ == '__main__':
