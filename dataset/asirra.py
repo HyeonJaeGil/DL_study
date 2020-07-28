@@ -30,8 +30,8 @@ def read_asirra_subset(subset_dir, one_hot=True, sample_size=None):
     X_set = np.empty((set_size, 256, 256, 3), dtype=np.float32)    # (N, H, W, 3)
     y_set = np.empty((set_size), dtype=np.uint8)                   # (N,)
     for i, filename in enumerate(filename_list):
-        if i % 1000 == 0:
-            print('Reading subset data: {}/{}...'.format(i, set_size), end='\r')
+        if i % 100 == 0:
+            print('Reading subset data: %d' %i)
         label = filename.split('.')[0]
         if label == 'cat':
             y = 0
@@ -121,7 +121,7 @@ def center_crop(images, crop_l):
                               W//2-(crop_l//2):W//2+(crop_l-crop_l//2)])
     return np.stack(cropped_images)
 
-
+# val_set = dataset.DataSet(X_trainval[:val_size], y_trainval[:val_size])
 class DataSet(object):
     def __init__(self, images, labels=None):
         """
