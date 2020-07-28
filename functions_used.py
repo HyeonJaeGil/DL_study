@@ -2,6 +2,7 @@ import tensorflow as tf
 import cProfile
 from tensorflow import keras
 from tensorflow.keras.utils import to_categorical
+from tensorflow.keras import optimizers
 from tensorflow.keras.datasets import mnist
 from tensorflow.keras.datasets import cifar10
 from matplotlib import pyplot
@@ -114,6 +115,7 @@ def define_model_cifar10(learning_rate):
     return model
 
 # with Keras
+
 def define_alexnet_keras(learning_rate):
 
     model = tf.keras.Sequential()
@@ -156,8 +158,40 @@ def define_alexnet_keras(learning_rate):
 
     return model
 
-# Data Augmentation
+def define_alexnet_keras_rev(learning_rate):
 
+    model = tf.keras.Sequential()
+    #L1
+    model.add(tf.keras.layers.Conv2D(filters=96, kernel_size=(11,11), strides=(4,4), input_shape=(227,227,3)))
+    #L2
+    model.add(tf.keras.layers.Conv2D(filters=256, kernel_size=(5,5), strides=(1,1), activation='relu', padding='same'))
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=(3,3), strides=(2,2)))
+    #L3
+    model.add(tf.keras.layers.Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), activation='relu', padding='same'))
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2)))
+    #L4
+    model.add(tf.keras.layers.Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), activation='relu', padding='same'))
+    model.add(tf.keras.layers.Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), activation='relu', padding='same'))
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=(3,3), strides=(2,2)))
+
+    #L6 Fully Connected
+    model.add(tf.keras.layers.Flatten())
+    model.add(tf.keras.layers.Dense(4096, activation='relu'))
+    model.add(tf.keras.layers.Dropout(0.5))
+
+    #L7 Fully Connected
+    model.add(tf.keras.layers.Dense(4096, activation='relu'))
+    model.add(tf.keras.layers.Dropout(0.5))
+
+    #L8 Fully Connected
+    model.add(tf.keras.layers.Dense(2, kernel_initializer='glorot_normal', activation='softmax'))
+    optimizer = optimizers.SGD(lr=learning_rate, decay=5e-5, momentum=0.9)
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
+    model.summary()
+
+    return model
+
+# Data Augmentation
 def corner_center_crop_reflect(images, crop_l):
     """
     Perform 4 corners and center cropping and reflection from images,

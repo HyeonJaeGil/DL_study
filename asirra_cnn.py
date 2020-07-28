@@ -1,5 +1,5 @@
 from functions_used import load_cifar_10, define_model_cifar10, train_and_evaluate_model, summarize_diagnostics,\
-    define_alexnet_keras, random_crop_reflect, center_crop
+    define_alexnet_keras, random_crop_reflect, center_crop, define_alexnet_keras_rev
 from dataset import asirra as dataset
 import tensorflow as tf
 import numpy as np
@@ -12,12 +12,12 @@ if __name__ == '__main__':
 
     # Parameter Setting
     learning_rate = 0.01
-    training_epoch = 10
-    batch_size = 32
+    training_epoch = 20
+    batch_size = 128
     display_step = 20
 
     root_dir = os.path.join("C:/Users", "Chan", "asirra")
-    trainval_dir = os.path.join(root_dir, "train")
+    trainval_dir = os.path.join(root_dir, "train") #change train to debug for checking just structure of code
 
     print(tf.__version__)
     # with Keras
@@ -38,7 +38,7 @@ if __name__ == '__main__':
     # val_set = dataset.DataSet()
     # train_set = dataset.DataSet(X_trainval[val_size:], y_trainval[val_size:])
     print(train_images.shape, train_labels.shape, val_images.shape, val_labels.shape)
-    model = define_alexnet_keras(learning_rate)
+    model = define_alexnet_keras_rev(learning_rate)
     history = train_and_evaluate_model(model, train_images, train_labels,
                                        val_images, val_labels, batch_size, training_epoch)
     summarize_diagnostics(history)
