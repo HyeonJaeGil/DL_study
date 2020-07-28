@@ -11,9 +11,9 @@ import os
 if __name__ == '__main__':
 
     # Parameter Setting
-    learning_rate = 0.001
+    learning_rate = 0.01
     training_epoch = 10
-    batch_size = 64
+    batch_size = 32
     display_step = 20
 
     root_dir = os.path.join("C:/Users", "Chan", "asirra")
