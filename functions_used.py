@@ -253,7 +253,7 @@ def augment_dataset(raw_images, raw_labels, crop_l=227):
 
     aug_images = np.concatenate([center_cropped_images,
                                    crop_reflected_images, corner_center_cropped_image], axis=0)
-
+ 
     aug_labels = np.concatenate([center_cropped_labels, crop_reflected_labels, corner_center_cropped_label], axis=0)
 
     return aug_images, aug_labels
