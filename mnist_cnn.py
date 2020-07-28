@@ -4,6 +4,8 @@ from functions_used import load_mnist, define_alexnet, define_model_mnist, train
 if __name__ == '__main__':
 
     x_train, y_train, x_test, y_test = load_mnist()
+    print(x_train.shape, y_train.shape, x_test.shape, y_test.shape)
+
 
     # hyper parameters
     learning_rate = 0.001

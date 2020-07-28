@@ -1,5 +1,5 @@
 from functions_used import load_cifar_10, define_model_cifar10, train_and_evaluate_model, summarize_diagnostics
-
+from dataset.asirra import read_asirra_subset
 
 if __name__ == '__main__':
 
