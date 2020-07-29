@@ -1,5 +1,5 @@
 from functions_used import load_cifar_10, define_model_cifar10, train_and_evaluate_model, summarize_diagnostics,\
-    define_alexnet_keras, random_crop_reflect, center_crop, corner_center_crop_reflect, augment_dataset
+    define_alexnet_keras, define_alexnet_keras_rev, random_crop_reflect, center_crop, corner_center_crop_reflect, augment_dataset
 from dataset import asirra as dataset
 import tensorflow as tf
 import numpy as np
@@ -17,8 +17,9 @@ if __name__ == '__main__':
     display_step = 20
     data_aug = True
 
-    root_dir = os.path.join("/home/hj", "Downloads", "asirra")
-    trainval_dir = os.path.join(root_dir, "train_mini")
+    root_dir = os.path.join("C:/Users", "Chan", "asirra")
+    trainval_dir = os.path.join(root_dir, "debug")  # change train to debug for checking just structure of code
+
     print(trainval_dir)
 
     print(tf.__version__)
@@ -48,7 +49,7 @@ if __name__ == '__main__':
 
 
     # define and train the model
-    model = define_alexnet_keras(learning_rate)
+    model = define_alexnet_keras_rev(learning_rate)
     history = train_and_evaluate_model(model, train_images, train_labels,
                                        val_images, val_labels, batch_size, training_epoch)
     summarize_diagnostics(history)

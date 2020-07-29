@@ -3,6 +3,7 @@ import cProfile
 from tensorflow import keras
 from tensorflow.keras.utils import to_categorical
 from tensorflow.keras.datasets import mnist
+from tensorflow.keras import optimizers
 from tensorflow.keras.datasets import cifar10
 from matplotlib import pyplot
 import sys
@@ -51,8 +52,8 @@ def summarize_diagnostics(history):
     loss_ax.plot(history.history['loss'], 'y', label='train loss')
     loss_ax.plot(history.history['val_loss'], 'r', label='val loss')
 
-    acc_ax.plot(history.history['accuracy'], 'b', label='train acc')
-    acc_ax.plot(history.history['val_accuracy'], 'g', label='val acc')
+    acc_ax.plot(history.history['acc'], 'b', label='train acc')
+    acc_ax.plot(history.history['val_acc'], 'g', label='val acc')
 
     loss_ax.set_xlabel('epoch')
     loss_ax.set_ylabel('loss')
@@ -152,6 +153,39 @@ def define_alexnet_keras(learning_rate):
     model.add(tf.keras.layers.Dense(2, kernel_initializer='glorot_normal', activation='softmax'))
 
     model.compile(loss='categorical_crossentropy', optimizer=tf.keras.optimizers.Adam(lr=learning_rate), metrics=['accuracy'])
+    model.summary()
+
+    return model
+
+def define_alexnet_keras_rev(learning_rate):
+
+    model = tf.keras.Sequential()
+    #L1
+    model.add(tf.keras.layers.Conv2D(filters=96, kernel_size=(11,11), strides=(4,4), input_shape=(227,227,3)))
+    #L2
+    model.add(tf.keras.layers.Conv2D(filters=256, kernel_size=(5,5), strides=(1,1), activation='relu', padding='same'))
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=(3,3), strides=(2,2)))
+    #L3
+    model.add(tf.keras.layers.Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), activation='relu', padding='same'))
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=(3, 3), strides=(2, 2)))
+    #L4
+    model.add(tf.keras.layers.Conv2D(filters=384, kernel_size=(3,3), strides=(1,1), activation='relu', padding='same'))
+    model.add(tf.keras.layers.Conv2D(filters=256, kernel_size=(3,3), strides=(1,1), activation='relu', padding='same'))
+    model.add(tf.keras.layers.MaxPooling2D(pool_size=(3,3), strides=(2,2)))
+
+    #L6 Fully Connected
+    model.add(tf.keras.layers.Flatten())
+    model.add(tf.keras.layers.Dense(4096, activation='relu'))
+    model.add(tf.keras.layers.Dropout(0.5))
+
+    #L7 Fully Connected
+    model.add(tf.keras.layers.Dense(4096, activation='relu'))
+    model.add(tf.keras.layers.Dropout(0.5))
+
+    #L8 Fully Connected
+    model.add(tf.keras.layers.Dense(2, kernel_initializer='glorot_normal', activation='softmax'))
+    optimizer = optimizers.SGD(lr=learning_rate, decay=5e-5, momentum=0.9)
+    model.compile(loss='categorical_crossentropy', optimizer=optimizer, metrics=['accuracy'])
     model.summary()
 
     return model
@@ -262,7 +296,7 @@ def augment_dataset(raw_images, raw_labels, crop_l=227):
 def train_and_evaluate_model(model, train_images, train_labels,
                              test_images, test_labels, batch_size, training_epoch):
     history = model.fit(train_images, train_labels, batch_size=batch_size, epochs=training_epoch,
-                            validation_data=(test_images, test_labels))
+                            validation_data=(test_images, test_labels), shuffle=True)
     evaluation = model.evaluate(test_images, test_labels)
     print('loss: ', evaluation[0])
     print('accuracy', evaluation[1])
