@@ -12,7 +12,7 @@ if __name__ == '__main__':
 
     # Parameter Setting
     learning_rate = 0.01
-    training_epoch = 20
+    training_epoch = 10
     batch_size = 128
     display_step = 20
 

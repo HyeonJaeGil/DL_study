@@ -52,8 +52,8 @@ def summarize_diagnostics(history):
     loss_ax.plot(history.history['loss'], 'y', label='train loss')
     loss_ax.plot(history.history['val_loss'], 'r', label='val loss')
 
-    acc_ax.plot(history.history['accuracy'], 'b', label='train acc')
-    acc_ax.plot(history.history['val_accuracy'], 'g', label='val acc')
+    acc_ax.plot(history.history['acc'], 'b', label='train acc')
+    acc_ax.plot(history.history['val_acc'], 'g', label='val acc')
 
     loss_ax.set_xlabel('epoch')
     loss_ax.set_ylabel('loss')
@@ -263,7 +263,7 @@ def random_crop_reflect(images, crop_l):
 def train_and_evaluate_model(model, train_images, train_labels,
                              test_images, test_labels, batch_size, training_epoch):
     history = model.fit(train_images, train_labels, batch_size=batch_size, epochs=training_epoch,
-                            validation_data=(test_images, test_labels))
+                            validation_data=(test_images, test_labels), shuffle=True)
     evaluation = model.evaluate(test_images, test_labels)
     print('loss: ', evaluation[0])
     print('accuracy', evaluation[1])
