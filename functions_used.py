@@ -220,7 +220,7 @@ def corner_center_crop_reflect(images, crop_l, labels = None):
         #FOR DOWNSIZING THE AUGMENTED DATA SIZE, COMMENT OUT FOLLOWING 2 LINES
         # aug_image = np.concatenate((aug_image_orig, aug_image_flipped), axis=0)    # (10, h, w, C)
         # augmented_images.append(aug_image)
-        augment_images.append(aug_image_flipped)        # (5, h, w, c)
+        augmented_images.append(aug_image_flipped)        # (5, h, w, c)
         
         if labels is not None:
             aug_labels = labels
