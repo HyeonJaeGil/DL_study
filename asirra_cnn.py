@@ -17,8 +17,8 @@ if __name__ == '__main__':
     display_step = 20
     data_aug = True
 
-    root_dir = os.path.join("C:/Users", "Chan", "asirra")
-    trainval_dir = os.path.join(root_dir, "debug")  # change train to debug for checking just structure of code
+    root_dir = os.path.join("/home", "chan", "asirra")
+    trainval_dir = os.path.join(root_dir, "train")  # change train to debug for checking just structure of code
 
     print(trainval_dir)
 
@@ -27,29 +27,19 @@ if __name__ == '__main__':
 
     # load the dataset
     trainval_images, trainval_labels = dataset.read_asirra_subset(trainval_dir, one_hot=True)
-
-    trainval_size = trainval_images.shape[0]
+    print("debug 1")
+    aug_trainval_images, aug_trainval_labels = augment_dataset(trainval_images, trainval_labels, crop_l=227)
+    print("debug 2")
+    trainval_size = aug_trainval_images.shape[0]
     val_size = int(trainval_size * 0.2)
 
-    raw_train_images, raw_train_labels = trainval_images[val_size:], trainval_labels[val_size:]
-    raw_val_images, raw_val_labels = trainval_images[:val_size], trainval_labels[:val_size]
-
-    # augument the dataset(12 times bigger)
-    aug_train_images, aug_train_labels = augment_dataset(raw_train_images, raw_train_labels, crop_l=227)
-    aug_val_images, aug_val_labels = augment_dataset(raw_val_images, raw_val_labels, crop_l=227)
-
-    print("raw dataset shape", raw_train_images.shape, raw_train_labels.shape, raw_val_images.shape, raw_val_labels.shape)
+    aug_train_images, aug_train_labels = aug_trainval_images[val_size:], aug_trainval_labels[val_size:]
+    aug_val_images, aug_val_labels = aug_trainval_images[:val_size], aug_trainval_labels[:val_size]
     print("Aug dataset shape", aug_train_images.shape, aug_train_labels.shape, aug_val_images.shape, aug_val_labels.shape)
-
-
-    if data_aug:
-        train_images, train_labels, val_images, val_labels = (aug_train_images, aug_train_labels, aug_val_images, aug_val_labels)
-    else:
-        train_images, train_labels, val_images, val_labels = (raw_train_images, raw_train_labels, raw_val_images, raw_val_labels)
-
+    train_images, train_labels, val_images, val_labels = (aug_train_images, aug_train_labels, aug_val_images, aug_val_labels)
 
     # define and train the model
     model = define_alexnet_keras_rev(learning_rate)
     history = train_and_evaluate_model(model, train_images, train_labels,
                                        val_images, val_labels, batch_size, training_epoch)
-    summarize_diagnostics(history)
+    summarize_diagnostic(history)

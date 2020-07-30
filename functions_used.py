@@ -275,23 +275,24 @@ def augment_dataset(raw_images, raw_labels, crop_l=227):
     center_cropped_labels = raw_labels
 
     #crop_reflected_set
-    crop_reflected_images = random_crop_reflect(raw_images, crop_l)
-    crop_reflected_labels = raw_labels
+    # crop_reflected_images = random_crop_reflect(raw_images, crop_l)
+    # crop_reflected_labels = raw_labels
 
     #4 corners, center cropped_and_reflected set
-    corner_center_cropped_image, corner_center_cropped_label = corner_center_crop_reflect(raw_images, crop_l, raw_labels)
-    corner_center_cropped_image = corner_center_cropped_image.reshape(-1, crop_l, crop_l, 3)
+    # corner_center_cropped_image, corner_center_cropped_label = corner_center_crop_reflect(raw_images, crop_l, raw_labels)
+    # corner_center_cropped_image = corner_center_cropped_image.reshape(-1, crop_l, crop_l, 3)
 
     # print(center_cropped_images.shape, crop_reflected_images.shape, corner_center_cropped_image.shape,
     #       corner_center_cropped_label.shape)
 
-    aug_images = np.concatenate([center_cropped_images,
-                                   crop_reflected_images, corner_center_cropped_image], axis=0)
- 
-    aug_labels = np.concatenate([center_cropped_labels, crop_reflected_labels, corner_center_cropped_label], axis=0)
-
-    return aug_images, aug_labels
-
+    # aug_images = np.concatenate([center_cropped_images,
+    #                               crop_reflected_images, corner_center_cropped_image], axis=0)
+    # aug_images = np.concatenate([center_cropped_images, crop_reflected_images], axis=0)
+    # aug_labels = np.concatenate([center_cropped_labels, crop_reflected_labels, corner_center_cropped_label], axis=0)
+    # aug_labels = np.concatenate([center_cropped_labels, crop_reflected_labels], axis=0)
+    # return aug_images, aug_labels
+    # return corner_center_cropped_image, corner_center_cropped_label
+    return center_cropped_images, center_cropped_labels
 
 def train_and_evaluate_model(model, train_images, train_labels,
                              test_images, test_labels, batch_size, training_epoch):
